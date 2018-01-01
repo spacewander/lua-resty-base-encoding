@@ -38,6 +38,8 @@ ffi.cdef([[
 size_t modp_b64_encode(char* dest, const char* str, size_t len,
     uint32_t no_padding);
 size_t modp_b64_decode(char* dest, const char* src, size_t len);
+size_t modp_b64w_encode(char* dest, const char* str, size_t len);
+size_t modp_b64w_decode(char* dest, const char* src, size_t len);
 ]])
 
 
@@ -76,6 +78,19 @@ function _M.encode_base64(s, no_padding)
 end
 
 
+function _M.encode_base64url(s)
+    if type(s) ~= "string" then
+        return nil, "must provide a string"
+    end
+
+    local slen = #s
+    local dlen = base64_encoded_length(slen)
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.modp_b64w_encode(dst, s, slen)
+    return ffi_string(dst, r_dlen)
+end
+
+
 local function base64_decoded_length(len)
     return floor((len + 3) / 4) * 3
 end
@@ -92,6 +107,22 @@ function _M.decode_base64(s)
     local r_dlen = encoding.modp_b64_decode(dst, s, slen)
     if r_dlen == -1 then
         return nil
+    end
+    return ffi_string(dst, r_dlen)
+end
+
+
+function _M.decode_base64url(s)
+    if type(s) ~= "string" then
+        return nil, "must provide a string"
+    end
+
+    local slen = #s
+    local dlen = base64_decoded_length(slen)
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.modp_b64w_decode(dst, s, slen)
+    if r_dlen == -1 then
+        return nil, "invalid input"
     end
     return ffi_string(dst, r_dlen)
 end

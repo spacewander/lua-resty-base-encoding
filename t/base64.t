@@ -42,6 +42,7 @@ _EOC_
 });
 
 check_accum_error_log();
+no_long_string();
 run_tests();
 
 __DATA__
@@ -155,3 +156,72 @@ ngx.say(s or "nil")
 nil
 nil
 nil
+
+
+
+=== TEST 12: encode_base64url
+--- lua
+local encode_base64url = base_encoding.encode_base64url
+-- RFC 4648 test vectors
+ngx.say("encode_base64url(\"\") = \"", encode_base64url(""), "\"")
+ngx.say("encode_base64url(\"f\") = \"", encode_base64url("f"), "\"")
+ngx.say("encode_base64url(\"fo\") = \"", encode_base64url("fo"), "\"")
+ngx.say("encode_base64url(\"foo\") = \"", encode_base64url("foo"), "\"")
+ngx.say("encode_base64url(\"foob\") = \"", encode_base64url("foob"), "\"")
+ngx.say("encode_base64url(\"fooba\") = \"", encode_base64url("fooba"), "\"")
+ngx.say("encode_base64url(\"foobar\") = \"", encode_base64url("foobar"), "\"")
+ngx.say("encode_base64url(\"\\xff\") = \"", encode_base64url("\xff"), "\"")
+ngx.say("encode_base64url(\"a\\0b\") = \"", encode_base64url("a\0b"), "\"")
+--- response_body
+encode_base64url("") = ""
+encode_base64url("f") = "Zg"
+encode_base64url("fo") = "Zm8"
+encode_base64url("foo") = "Zm9v"
+encode_base64url("foob") = "Zm9vYg"
+encode_base64url("fooba") = "Zm9vYmE"
+encode_base64url("foobar") = "Zm9vYmFy"
+encode_base64url("\xff") = "_w"
+encode_base64url("a\0b") = "YQBi"
+
+
+
+=== TEST 13: decode_base64url
+--- lua
+local decode_base64url = base_encoding.decode_base64url
+
+local function to_hex(str)
+    return (str:gsub('.', function(c)
+        return string.format('%02x', string.byte(c))
+    end))
+end
+
+-- RFC 4648 test vectors
+ngx.say("decode_base64url(\"\") = \"", decode_base64url(""), "\"")
+ngx.say("decode_base64url(\"Zg\") = \"", decode_base64url("Zg"), "\"")
+ngx.say("decode_base64url(\"Zm8\") = \"", decode_base64url("Zm8"), "\"")
+ngx.say("decode_base64url(\"Zm9v\") = \"", decode_base64url("Zm9v"), "\"")
+ngx.say("decode_base64url(\"Zm9vYg\") = \"", decode_base64url("Zm9vYg"), "\"")
+ngx.say("decode_base64url(\"Zm9vYmE\") = \"", decode_base64url("Zm9vYmE"), "\"")
+ngx.say("decode_base64url(\"Zm9vYmFy\") = \"", decode_base64url("Zm9vYmFy"), "\"")
+ngx.say("decode_base64url(\"_w\") = \"\\x", to_hex(decode_base64url("_w")), "\"")
+ngx.say("decode_base64url(\"YQBi\") = \"\\x", to_hex(decode_base64url("YQBi")), "\"")
+--- response_body
+decode_base64url("") = ""
+decode_base64url("Zg") = "f"
+decode_base64url("Zm8") = "fo"
+decode_base64url("Zm9v") = "foo"
+decode_base64url("Zm9vYg") = "foob"
+decode_base64url("Zm9vYmE") = "fooba"
+decode_base64url("Zm9vYmFy") = "foobar"
+decode_base64url("_w") = "\xff"
+decode_base64url("YQBi") = "\x610062"
+
+
+
+=== TEST 14: decode_base64url with invalid input
+--- lua
+local decode_base64url = base_encoding.decode_base64url
+local res, err = decode_base64url("     ")
+ngx.say("decode_base64url returned: ", res, ", ", err)
+--- response_body
+decode_base64url returned: nil, invalid input
