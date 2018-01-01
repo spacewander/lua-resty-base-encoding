@@ -19,12 +19,6 @@
 
 /* public header */
 #include "modp_b64.h"
-
-/* if on motorola, sun, ibm; uncomment this */
-/* #define WORDS_BIGENDIAN 1 */
-/* else for Intel, Amd; uncomment this */
-#undef WORDS_BIGENDIAN
-
 #include "modp_b64_data.h"
 
 #define BADCHAR 0x01FFFFFF
@@ -88,12 +82,14 @@ size_t modp_b64_decode(char* dest, const char* src, size_t len)
     if (len == 0)
         return 0;
 
-    /* if padding is used, then the message must be at least
-       4 chars and be a multiple of 4.
-       there can be at most 2 pad chars at the end */
-    if (len < 4 || (len % 4 != 0))
-        return -1;
     if (src[len - 1] == CHARPAD) {
+        /* if padding is used, then the message must be at least
+        4 chars and be a multiple of 4.
+        there can be at most 2 pad chars at the end */
+        if (len < 4 || (len % 4 != 0)) {
+            return -1;
+        }
+
         len--;
         if (src[len - 1] == CHARPAD) {
             len--;
