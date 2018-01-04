@@ -71,7 +71,6 @@ size_t modp_b64_encode(char* dest, const char* str, size_t len,
         }
     }
 
-    *p = '\0';
     return (size_t)(p - (uint8_t*)dest);
 }
 

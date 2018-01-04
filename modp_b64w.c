@@ -64,7 +64,6 @@ size_t modp_b64w_encode(char* dest, const char* str, size_t len)
         *p++ = e2[(t2 & 0x0F) << 2];
     }
 
-    *p = '\0';
     return (size_t)(p - (uint8_t*)dest);
 }
 

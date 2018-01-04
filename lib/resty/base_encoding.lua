@@ -29,7 +29,7 @@ local function load_shared_lib(so_name)
 
     tried_paths[#tried_paths + 1] =
         'tried above paths but can not load ' .. so_name
-    error(table.concat(tried_paths, '\r\n', 1, #tried_paths))
+    error(table.concat(tried_paths, '\n'))
 end
 local encoding = load_shared_lib("librestybaseencoding.so")
 
@@ -40,6 +40,8 @@ size_t modp_b64_encode(char* dest, const char* str, size_t len,
 size_t modp_b64_decode(char* dest, const char* src, size_t len);
 size_t modp_b64w_encode(char* dest, const char* str, size_t len);
 size_t modp_b64w_decode(char* dest, const char* src, size_t len);
+size_t b32_encode(char* dest, const char* src, size_t len, uint32_t no_padding);
+size_t b32_decode(char* dest, const char* src, size_t len);
 ]])
 
 
@@ -121,6 +123,50 @@ function _M.decode_base64url(s)
     local dlen = base64_decoded_length(slen)
     local dst = get_string_buf(dlen)
     local r_dlen = encoding.modp_b64w_decode(dst, s, slen)
+    if r_dlen == -1 then
+        return nil, "invalid input"
+    end
+    return ffi_string(dst, r_dlen)
+end
+
+
+local function base32_encoded_length(len)
+    return floor((len + 4) / 5) * 8
+end
+
+
+function _M.encode_base32(s, no_padding)
+    if type(s) ~= 'string' then
+        return error("must provide a string")
+    end
+
+    local slen = #s
+    local no_padding_int = no_padding and 1 or 0
+    local dlen = base32_encoded_length(slen)
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.b32_encode(dst, s, slen, no_padding_int)
+    return ffi_string(dst, r_dlen)
+end
+
+
+local function base32_decoded_length(len)
+    return floor(len * 5 / 8)
+end
+
+
+function _M.decode_base32(s)
+    if type(s) ~= 'string' then
+        return error("must provide a string")
+    end
+
+    local slen = #s
+    if slen == 0 then
+        return ""
+    end
+
+    local dlen = base32_decoded_length(slen)
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.b32_decode(dst, s, slen)
     if r_dlen == -1 then
         return nil, "invalid input"
     end
