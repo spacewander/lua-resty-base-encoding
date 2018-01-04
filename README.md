@@ -7,6 +7,8 @@ All encoding are implemented in optimized C code with LuaJIT FFI binding.
 Most of the inner encoding implementations are from Nick Galbreath's [stringencoders](https://github.com/client9/stringencoders).
 The base32 encoding is implemented by myself, but also inspired from his art work.
 
+Build status: [![Travis](https://travis-ci.org/spacewander/lua-resty-base-encoding.svg?branch=master)](https://travis-ci.org/spacewander/lua-resty-base-encoding)
+
 Table of Contents
 =================
 
