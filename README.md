@@ -1,6 +1,6 @@
 # Name
 
-lua-resty-base-encoding - Faster alternative to base64 encoding and provides missing base32 encoding for OpenResty application
+lua-resty-base-encoding - Faster alternative to base64 encoding and provides missing base16/32 encoding for OpenResty application
 
 All encoding are implemented in optimized C code with LuaJIT FFI binding.
 
@@ -17,6 +17,8 @@ Table of Contents
 * [Synopsis](#synopsis)
 * [Installation](#installation)
 * [Methods](#methods)
+    * [encode_base16](#encode_base16)
+    * [decode_base16](#decode_base16)
     * [encode_base32](#encode_base32)
     * [decode_base32](#decode_base32)
     * [encode_base64](#encode_base64)
@@ -59,6 +61,25 @@ Finally, add the `$pwd/lib` to your `lua_package_path`.
 [Back to TOC](#table-of-contents)
 
 ## Methods
+
+### encode_base16
+`syntax: encoded = encode_base16(raw[, out_in_lowercase])`
+
+Encode given string into base16 format(aka. hex/hexadecimal format).
+This method may be named `to_hex` or `encodeHex` in other languages.
+The default output letters are in `[0-9A-F]`. If you specify the `out_in_lowercase` to `true`, the output will be in `[0-9a-f]`.
+
+[Back to TOC](#table-of-contents)
+
+### decode_base16
+`syntax: raw, err = decode_base16(encoded)`
+
+Decode base16 format(aka. hex/hexadecimal format) string into its raw value.
+This method may be named `from_hex` or `decodeHex` in other languages.
+If the given string is not valid base16 encoded, the `raw` will be `nil` and `err` will be `"invalid input"`.
+Letters in `[0-9a-fA-F]` are considered valid.
+
+[Back to TOC](#table-of-contents)
 
 ### encode_base32
 `syntax: encoded = encode_base32(raw[, no_padding])`

@@ -42,6 +42,9 @@ size_t modp_b64w_encode(char* dest, const char* str, size_t len);
 size_t modp_b64w_decode(char* dest, const char* src, size_t len);
 size_t b32_encode(char* dest, const char* src, size_t len, uint32_t no_padding);
 size_t b32_decode(char* dest, const char* src, size_t len);
+size_t modp_b16_encode(char* dest, const char* str, size_t len,
+    uint32_t out_in_lowercase);
+size_t modp_b16_decode(char* dest, const char* src, size_t len);
 ]])
 
 
@@ -167,6 +170,50 @@ function _M.decode_base32(s)
     local dlen = base32_decoded_length(slen)
     local dst = get_string_buf(dlen)
     local r_dlen = encoding.b32_decode(dst, s, slen)
+    if r_dlen == -1 then
+        return nil, "invalid input"
+    end
+    return ffi_string(dst, r_dlen)
+end
+
+
+local function base16_encoded_length(len)
+    return len * 2
+end
+
+
+function _M.encode_base16(s, out_in_lowercase)
+    if type(s) ~= 'string' then
+        return error("must provide a string")
+    end
+
+    local out_in_lowercase_int = out_in_lowercase and 1 or 0
+    local slen = #s
+    local dlen = base16_encoded_length(slen)
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.modp_b16_encode(dst, s, slen, out_in_lowercase_int)
+    return ffi_string(dst, r_dlen)
+end
+
+
+local function base16_decoded_length(len)
+    return floor((len + 1) / 2)
+end
+
+
+function _M.decode_base16(s)
+    if type(s) ~= 'string' then
+        return error("must provide a string")
+    end
+
+    local slen = #s
+    if slen == 0 then
+        return ""
+    end
+
+    local dlen = base16_decoded_length(slen)
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.modp_b16_decode(dst, s, slen)
     if r_dlen == -1 then
         return nil, "invalid input"
     end
