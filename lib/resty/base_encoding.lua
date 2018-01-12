@@ -69,7 +69,7 @@ function _M.encode_base64(s, no_padding)
 
     if no_padding then
         if no_padding ~= true then
-            return error("boolean argument only")
+            error("boolean argument only")
         end
 
         no_padding_bool = true
@@ -103,7 +103,7 @@ end
 
 function _M.decode_base64(s)
     if type(s) ~= 'string' then
-        return error("string argument only")
+        error("string argument only")
     end
 
     local slen = #s
@@ -140,7 +140,7 @@ end
 
 function _M.encode_base32(s, no_padding)
     if type(s) ~= 'string' then
-        return error("must provide a string")
+        error("must provide a string")
     end
 
     local slen = #s
@@ -159,7 +159,7 @@ end
 
 function _M.decode_base32(s)
     if type(s) ~= 'string' then
-        return error("must provide a string")
+        error("must provide a string")
     end
 
     local slen = #s
@@ -184,7 +184,7 @@ end
 
 function _M.encode_base16(s, out_in_lowercase)
     if type(s) ~= 'string' then
-        return error("must provide a string")
+        error("must provide a string")
     end
 
     local out_in_lowercase_int = out_in_lowercase and 1 or 0
@@ -203,7 +203,7 @@ end
 
 function _M.decode_base16(s)
     if type(s) ~= 'string' then
-        return error("must provide a string")
+        error("must provide a string")
     end
 
     local slen = #s
