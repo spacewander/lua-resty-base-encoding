@@ -145,3 +145,39 @@ decode: aaa: invalid input
 decode: agA0: invalid input
 decode: aaaR: invalid input
 decode: aaaaaR: invalid input
+
+
+
+=== TEST 6: random tests
+--- lua
+local start = ngx.now()
+while ture do
+    for _ = 1, 1000 do
+        local size = math.random(1, 20)
+        local buf = table.new(size, 0)
+        for i = 1, size do
+            buf[i] = math.random(33, 126)
+        end
+
+        local raw = string.char(unpack(buf))
+        local encoded = base_encoding.encode_base16(raw)
+        if base_encoding.decode_base16(encoded) ~= raw then
+            ngx.say("failed case: ", raw)
+            return
+        end
+
+        local encoded = base_encoding.encode_base16(raw, true)
+        if base_encoding.decode_base16(encoded) ~= raw then
+            ngx.say("failed case with lowercase: ", raw)
+            return
+        end
+    end
+
+    ngx.update_time()
+    if ngx.now() - start > 3 then
+        break
+    end
+end
+ngx.say("ok")
+--- response_body
+ok
