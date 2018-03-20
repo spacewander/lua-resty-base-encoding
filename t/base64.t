@@ -231,7 +231,7 @@ decode_base64url returned: nil, invalid input
 === TEST 15: random tests
 --- lua
 local start = ngx.now()
-while ture do
+while true do
     for _ = 1, 1000 do
         local size = math.random(1, 20)
         local buf = table.new(size, 0)

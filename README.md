@@ -21,6 +21,8 @@ Table of Contents
     * [decode_base16](#decode_base16)
     * [encode_base32](#encode_base32)
     * [decode_base32](#decode_base32)
+    * [encode_base32hex](#encode_base32hex)
+    * [decode_base32hex](#decode_base32hex)
     * [encode_base64](#encode_base64)
     * [decode_base64](#decode_base64)
     * [encode_base64url](#encode_base64url)
@@ -92,6 +94,22 @@ Encode given string into base32 format with/without padding '='. The default val
 `syntax: raw, err = decode_base32(encoded)`
 
 Decode base32 format string into its raw value. If the given string is not valid base32 encoded, the `raw` will be `nil` and `err` will be `"invalid input"`.
+
+[Back to TOC](#table-of-contents)
+
+### encode_base32hex
+`syntax: encoded = encode_base32hex(raw[, no_padding])`
+
+Encode given string into base32hex format with/without padding '='. The default value of `no_padding` is false.
+For more info of base32hex format, see https://tools.ietf.org/html/rfc4648#section-7.
+
+[Back to TOC](#table-of-contents)
+
+### decode_base32hex
+`syntax: raw, err = decode_base32(encoded)`
+
+Decode base32hex format string into its raw value. If the given string is not valid base32hex encoded, the `raw` will be `nil` and `err` will be `"invalid input"`.
+For more info of base32hex format, see https://tools.ietf.org/html/rfc4648#section-7.
 
 [Back to TOC](#table-of-contents)
 

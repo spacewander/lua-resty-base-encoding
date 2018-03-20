@@ -40,8 +40,9 @@ size_t modp_b64_encode(char* dest, const char* str, size_t len,
 size_t modp_b64_decode(char* dest, const char* src, size_t len);
 size_t modp_b64w_encode(char* dest, const char* str, size_t len);
 size_t modp_b64w_decode(char* dest, const char* src, size_t len);
-size_t b32_encode(char* dest, const char* src, size_t len, uint32_t no_padding);
-size_t b32_decode(char* dest, const char* src, size_t len);
+size_t b32_encode(char* dest, const char* src, size_t len, uint32_t no_padding,
+    uint32_t hex);
+size_t b32_decode(char* dest, const char* src, size_t len, uint32_t hex);
 size_t modp_b16_encode(char* dest, const char* str, size_t len,
     uint32_t out_in_lowercase);
 size_t modp_b16_decode(char* dest, const char* src, size_t len);
@@ -138,7 +139,7 @@ local function base32_encoded_length(len)
 end
 
 
-function _M.encode_base32(s, no_padding)
+local function encode_base32(s, no_padding, hex)
     if type(s) ~= 'string' then
         error("must provide a string")
     end
@@ -147,8 +148,16 @@ function _M.encode_base32(s, no_padding)
     local no_padding_int = no_padding and 1 or 0
     local dlen = base32_encoded_length(slen)
     local dst = get_string_buf(dlen)
-    local r_dlen = encoding.b32_encode(dst, s, slen, no_padding_int)
+    local r_dlen = encoding.b32_encode(dst, s, slen, no_padding_int, hex)
     return ffi_string(dst, r_dlen)
+end
+
+function _M.encode_base32(s, no_padding)
+    return encode_base32(s, no_padding, 0)
+end
+
+function _M.encode_base32hex(s, no_padding)
+    return encode_base32(s, no_padding, 1)
 end
 
 
@@ -157,7 +166,7 @@ local function base32_decoded_length(len)
 end
 
 
-function _M.decode_base32(s)
+local function decode_base32(s, hex)
     if type(s) ~= 'string' then
         error("must provide a string")
     end
@@ -169,11 +178,19 @@ function _M.decode_base32(s)
 
     local dlen = base32_decoded_length(slen)
     local dst = get_string_buf(dlen)
-    local r_dlen = encoding.b32_decode(dst, s, slen)
+    local r_dlen = encoding.b32_decode(dst, s, slen, hex)
     if r_dlen == -1 then
         return nil, "invalid input"
     end
     return ffi_string(dst, r_dlen)
+end
+
+function _M.decode_base32(s)
+    return decode_base32(s, 0)
+end
+
+function _M.decode_base32hex(s)
+    return decode_base32(s, 1)
 end
 
 
