@@ -8,7 +8,7 @@ local ffi = require "ffi"
 local ffi_string = ffi.string
 
 
-local _M = { version = "0.1"}
+local _M = { version = "1.0.0"}
 
 
 local function load_shared_lib(so_name)
