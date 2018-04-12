@@ -149,6 +149,7 @@ decode: aaaaaR: invalid input
 
 
 === TEST 6: random tests
+--- timeout: 5s
 --- lua
 local start = ngx.now()
 while true do
@@ -181,3 +182,18 @@ end
 ngx.say("ok")
 --- response_body
 ok
+
+
+
+=== TEST 7: base16 (invalid args)
+--- lua
+local d = 123
+local res = base_encoding.encode_base16(d)
+ngx.say(tonumber(base_encoding.decode_base16(res)) == d)
+local ok, err = pcall(base_encoding.decode_base16, d)
+if not ok then
+    ngx.say(err)
+end
+--- response_body
+true
+string argument only

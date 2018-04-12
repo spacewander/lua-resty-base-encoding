@@ -8,7 +8,7 @@ local ffi = require "ffi"
 local ffi_string = ffi.string
 
 
-local _M = { version = "1.0.0"}
+local _M = { version = "1.1.0"}
 
 
 local function load_shared_lib(so_name)
@@ -49,13 +49,7 @@ size_t modp_b16_decode(char* dest, const char* src, size_t len);
 ]])
 
 
-local function base64_encoded_length(len, no_padding)
-    return no_padding and floor((len * 8 + 5) / 6) or
-           floor((len + 2) / 3) * 4
-end
-
-
-function _M.encode_base64(s, no_padding)
+local function check_encode_str(s)
     if type(s) ~= 'string' then
         if not s then
             s = ''
@@ -63,6 +57,19 @@ function _M.encode_base64(s, no_padding)
             s = tostring(s)
         end
     end
+
+    return s
+end
+
+
+local function base64_encoded_length(len, no_padding)
+    return no_padding and floor((len * 8 + 5) / 6) or
+           floor((len + 2) / 3) * 4
+end
+
+
+function _M.encode_base64(s, no_padding)
+    s = check_encode_str(s)
 
     local slen = #s
     local no_padding_bool = false
@@ -97,15 +104,20 @@ function _M.encode_base64url(s)
 end
 
 
+local function check_decode_str(s, level)
+    if type(s) ~= 'string' then
+        error("string argument only", level + 2)
+    end
+end
+
+
 local function base64_decoded_length(len)
     return floor((len + 3) / 4) * 3
 end
 
 
 function _M.decode_base64(s)
-    if type(s) ~= 'string' then
-        error("string argument only")
-    end
+    check_decode_str(s, 1)
 
     local slen = #s
     local dlen = base64_decoded_length(slen)
@@ -140,9 +152,7 @@ end
 
 
 local function encode_base32(s, no_padding, hex)
-    if type(s) ~= 'string' then
-        error("must provide a string")
-    end
+    s = check_encode_str(s)
 
     local slen = #s
     local no_padding_int = no_padding and 1 or 0
@@ -167,9 +177,7 @@ end
 
 
 local function decode_base32(s, hex)
-    if type(s) ~= 'string' then
-        error("must provide a string")
-    end
+    check_decode_str(s, 1)
 
     local slen = #s
     if slen == 0 then
@@ -200,9 +208,7 @@ end
 
 
 function _M.encode_base16(s, out_in_lowercase)
-    if type(s) ~= 'string' then
-        error("must provide a string")
-    end
+    s = check_encode_str(s)
 
     local out_in_lowercase_int = out_in_lowercase and 1 or 0
     local slen = #s
@@ -219,9 +225,7 @@ end
 
 
 function _M.decode_base16(s)
-    if type(s) ~= 'string' then
-        error("must provide a string")
-    end
+    check_decode_str(s, 1)
 
     local slen = #s
     if slen == 0 then

@@ -229,6 +229,7 @@ decode_base64url returned: nil, invalid input
 
 
 === TEST 15: random tests
+--- timeout: 5s
 --- lua
 local start = ngx.now()
 while true do
@@ -267,3 +268,36 @@ end
 ngx.say("ok")
 --- response_body
 ok
+
+
+
+=== TEST 16: base64 (invalid args)
+--- lua
+local d = 123
+local res = base_encoding.encode_base64(d)
+ngx.say(tonumber(base_encoding.decode_base64(res)) == d)
+local ok, err = pcall(base_encoding.decode_base64, d)
+if not ok then
+    ngx.say(err)
+end
+--- response_body
+true
+string argument only
+
+
+
+=== TEST 17: base64url (invalid args)
+--- lua
+local d = 456
+local ok, err = base_encoding.encode_base64url(d)
+if not ok then
+    ngx.say(err)
+end
+
+local ok, err = base_encoding.decode_base64url(d)
+if not ok then
+    ngx.say(err)
+end
+--- response_body
+must provide a string
+must provide a string

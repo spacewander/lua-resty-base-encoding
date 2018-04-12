@@ -280,6 +280,7 @@ decode: MMMMMM: invalid input
 
 
 === TEST 6: random tests, base32
+--- timeout: 5s
 --- lua
 local start = ngx.now()
 while true do
@@ -544,6 +545,7 @@ decode: MMMMMM: invalid input
 
 
 === TEST 12: random tests, base32hex
+--- timeout: 5s
 --- lua
 local start = ngx.now()
 while true do
@@ -570,3 +572,33 @@ end
 ngx.say("ok")
 --- response_body
 ok
+
+
+
+=== TEST 13: base32 (invalid args)
+--- lua
+local d = 123
+local res = base_encoding.encode_base32(d)
+ngx.say(tonumber(base_encoding.decode_base32(res)) == d)
+local ok, err = pcall(base_encoding.decode_base32, d)
+if not ok then
+    ngx.say(err)
+end
+--- response_body
+true
+string argument only
+
+
+
+=== TEST 14: base32hex (invalid args)
+--- lua
+local d = 456
+local res = base_encoding.encode_base32hex(d)
+ngx.say(tonumber(base_encoding.decode_base32hex(res)) == d)
+local ok, err = pcall(base_encoding.decode_base32hex, d)
+if not ok then
+    ngx.say(err)
+end
+--- response_body
+true
+string argument only
