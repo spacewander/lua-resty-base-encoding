@@ -147,10 +147,11 @@ size_t modp_b64w_decode(char* dest, const char* src, size_t len)
     size_t chunks;
 
     uint8_t* p;
+    uint8_t* q;
     uint32_t x;
     uint32_t* destInt;
-    const uint32_t* srcInt = (const uint32_t*)src;
-    uint32_t y = *srcInt++;
+    const uint32_t* srcInt;
+    uint32_t y;
 
     if (len == 0)
         return 0;
@@ -179,8 +180,8 @@ size_t modp_b64w_decode(char* dest, const char* src, size_t len)
     x = 0;
     destInt = (uint32_t*)p;
     srcInt = (const uint32_t*)src;
-    y = *srcInt++;
     for (i = 0; i < chunks; ++i) {
+        y = *srcInt;
         x = d0[y & 0xff] | d1[(y >> 8) & 0xff] | d2[(y >> 16) & 0xff] | d3[(y >> 24) & 0xff];
 
         if (x >= BADCHAR) {
@@ -189,11 +190,12 @@ size_t modp_b64w_decode(char* dest, const char* src, size_t len)
         *destInt = x;
         p += 3;
         destInt = (uint32_t*)p;
-        y = *srcInt++;
+        srcInt++;
     }
 
     switch (leftover) {
     case 0:
+        y = *srcInt;
         x = d0[y & 0xff] | d1[(y >> 8) & 0xff] | d2[(y >> 16) & 0xff] | d3[(y >> 24) & 0xff];
 
         if (x >= BADCHAR) {
@@ -203,18 +205,22 @@ size_t modp_b64w_decode(char* dest, const char* src, size_t len)
         *p++ = ((uint8_t*)(&x))[1];
         *p = ((uint8_t*)(&x))[2];
         return (chunks + 1) * 3;
+
 #ifndef DOPAD
     case 1: /* with padding this is an impossible case */
-        x = d0[y & 0xff];
+        q = (uint8_t*)srcInt;
+        x = d0[*q];
         *p = *((uint8_t*)(&x)); /* i.e. first char/byte in int */
         break;
 #endif
     case 2: /* case 2, 1  output byte */
-        x = d0[y & 0xff] | d1[y >> 8 & 0xff];
+        q = (uint8_t*)srcInt;
+        x = d0[*q] | d1[*(q+1)];
         *p = *((uint8_t*)(&x)); /* i.e. first char */
         break;
     default: /* case 3, 2 output bytes */
-        x = d0[y & 0xff] | d1[y >> 8 & 0xff] | d2[y >> 16 & 0xff]; /* 0x3c */
+        q = (uint8_t*)srcInt;
+        x = d0[*q] | d1[*(q+1)] | d2[*(q+2)]; /* 0x3c */
         *p++ = ((uint8_t*)(&x))[0];
         *p = ((uint8_t*)(&x))[1];
         break;
