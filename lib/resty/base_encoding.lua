@@ -222,7 +222,7 @@ end
 
 
 local function base16_decoded_length(len)
-    return floor((len + 1) / 2)
+    return len / 2
 end
 
 
@@ -235,6 +235,10 @@ function _M.decode_base16(s)
     end
 
     local dlen = base16_decoded_length(slen)
+    if floor(dlen) ~= dlen then
+        return nil, "invalid input"
+    end
+
     local dst = get_string_buf(dlen)
     local r_dlen = encoding.modp_b16_decode(dst, s, slen)
     if r_dlen == -1 then

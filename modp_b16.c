@@ -1,3 +1,4 @@
+#include <stdlib.h>
 /**
  * \file
  * <PRE>
@@ -101,10 +102,6 @@ size_t modp_b16_decode(char* dest, const char* str, size_t len)
     const uint8_t* s = (const uint8_t*)str;
     const size_t buckets = len >> 2; /* i.e. len / 4 */
     const size_t leftover = len & 0x03; /* i.e. len % 4 */
-    if (leftover & 0x01) { /* i.e if leftover is odd,      */
-        /* leftover==1 || leftover == 3 */
-        return (size_t)-1;
-    }
 
     /* read 4 bytes, output 2.
      * Note on PPC G4, GCC 4.0, it's quite a bit faster to
