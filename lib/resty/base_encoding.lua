@@ -46,6 +46,8 @@ size_t b32_decode(char* dest, const char* src, size_t len, uint32_t hex);
 size_t modp_b16_encode(char* dest, const char* str, size_t len,
     uint32_t out_in_lowercase);
 size_t modp_b16_decode(char* dest, const char* src, size_t len);
+size_t modp_b2_encode(char* dest, const char* str, size_t len);
+size_t modp_b2_decode(char* dest, const char* str, size_t len);
 ]])
 
 
@@ -235,6 +237,49 @@ function _M.decode_base16(s)
     local dlen = base16_decoded_length(slen)
     local dst = get_string_buf(dlen)
     local r_dlen = encoding.modp_b16_decode(dst, s, slen)
+    if r_dlen == -1 then
+        return nil, "invalid input"
+    end
+    return ffi_string(dst, r_dlen)
+end
+
+
+local function base2_encoded_length(len)
+    return len * 8
+end
+
+
+function _M.encode_base2(s)
+    s = check_encode_str(s)
+
+    local slen = #s
+    local dlen = base2_encoded_length(slen)
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.modp_b2_encode(dst, s, slen)
+    return ffi_string(dst, r_dlen)
+end
+
+
+local function base2_decoded_length(len)
+    return len / 8
+end
+
+
+function _M.decode_base2(s)
+    check_decode_str(s, 1)
+
+    local slen = #s
+    if slen == 0 then
+        return ""
+    end
+
+    local dlen = base2_decoded_length(slen)
+    if floor(dlen) ~= dlen then
+        return nil, "invalid input"
+    end
+
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.modp_b2_decode(dst, s, slen)
     if r_dlen == -1 then
         return nil, "invalid input"
     end

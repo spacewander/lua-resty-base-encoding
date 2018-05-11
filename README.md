@@ -1,6 +1,6 @@
 # Name
 
-lua-resty-base-encoding - Faster alternative to base64 encoding and provides missing base16/32 encoding for OpenResty application
+lua-resty-base-encoding - Faster alternative to base64 encoding and provides missing base encoding for OpenResty application
 
 All encoding are implemented in optimized C code with LuaJIT FFI binding.
 
@@ -17,6 +17,8 @@ Table of Contents
 * [Synopsis](#synopsis)
 * [Installation](#installation)
 * [Methods](#methods)
+    * [encode_base2](#encode_base2)
+    * [decode_base2](#decode_base2)
     * [encode_base16](#encode_base16)
     * [decode_base16](#decode_base16)
     * [encode_base32](#encode_base32)
@@ -63,6 +65,27 @@ Finally, add the `$pwd/lib` to your `lua_package_path`.
 [Back to TOC](#table-of-contents)
 
 ## Methods
+
+### encode_base2
+`syntax: encoded = encode_base2(raw)`
+
+Encode given string into base2 format(aka. bin format). Note that the input is string.
+Therefore, the `encode_base2` result of `1` is `00110001`, because the ascii value of `1` is 49, and
+the binary format of 49 is `00110001`. And don't forget that the output of `encode_base2` is a string
+instead of a binary number.
+
+[Back to TOC](#table-of-contents)
+
+### decode_base2
+`syntax: raw, err = decode_base2(encoded)`
+
+Decode base2 format string into its raw value.
+If the given string is not valid base2 encoded, the `raw` will be `nil` and `err` will be `"invalid input"`.
+Any character in the input string which is not `1` will be considered as `0`. For example, `aa11aaa1` is equal
+to `00110001`. There is no RFC requires we should treat character not in `0` and `1` as invalid input, and
+check if a character is '0' or not will slow the performance down by 50%.
+
+[Back to TOC](#table-of-contents)
 
 ### encode_base16
 `syntax: encoded = encode_base16(raw[, out_in_lowercase])`
