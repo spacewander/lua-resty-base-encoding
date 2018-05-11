@@ -28,4 +28,5 @@ script:
   - export PATH=$PATH:/usr/local/openresty-valgrind/nginx/sbin
   - nginx -V
   - make test
-  - TEST_NGINX_USE_VALGRIND=1 TEST_USE_HUP=1 TEST_NGINX_SLEEP=1 prove -r t
+  - TEST_NGINX_USE_VALGRIND=1 TEST_USE_HUP=1 TEST_NGINX_SLEEP=1 prove -r t 2>/tmp/valgrind_report
+  - grep insert_a_suppression_name_here /tmp/valgrind_report && cat /tmp/valgrind_report && exit 1 || exit 0
