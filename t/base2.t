@@ -145,7 +145,6 @@ while true do
     end
 end
 ngx.say("ok")
---- ONLY
 --- response_body
 ok
 
