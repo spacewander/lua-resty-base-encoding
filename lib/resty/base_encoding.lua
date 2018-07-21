@@ -1,7 +1,9 @@
 local error = error
 local tostring = tostring
 local type = type
+local ceil = math.ceil
 local floor = math.floor
+local str_rep = string.rep
 local base = require "resty.core.base"
 local get_string_buf = base.get_string_buf
 local ffi = require "ffi"
@@ -48,6 +50,8 @@ size_t modp_b16_encode(char* dest, const char* str, size_t len,
 size_t modp_b16_decode(char* dest, const char* src, size_t len);
 size_t modp_b2_encode(char* dest, const char* str, size_t len);
 size_t modp_b2_decode(char* dest, const char* str, size_t len);
+size_t modp_b85_encode(char* dest, const char* str, size_t len);
+size_t modp_b85_decode(char* dest, const char* str, size_t len);
 ]])
 
 
@@ -284,6 +288,49 @@ function _M.decode_base2(s)
 
     local dst = get_string_buf(dlen)
     local r_dlen = encoding.modp_b2_decode(dst, s, slen)
+    if r_dlen == -1 then
+        return nil, "invalid input"
+    end
+    return ffi_string(dst, r_dlen)
+end
+
+
+local function base85_encoded_length(len)
+    return len / 4 * 5
+end
+
+
+function _M.encode_base85(s)
+    s = check_encode_str(s)
+
+    local slen = #s
+    if slen == 0 then
+        return ""
+    end
+
+    local dlen = base85_encoded_length(slen)
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.modp_b85_encode(dst, s, slen)
+    return ffi_string(dst, r_dlen)
+end
+
+
+local function base85_decoded_length(len)
+    return ceil(len / 5) * 4
+end
+
+
+function _M.decode_base85(s)
+    check_decode_str(s, 1)
+
+    local slen = #s
+    if slen == 0 then
+        return ""
+    end
+
+    local dlen = base85_decoded_length(slen)
+    local dst = get_string_buf(dlen)
+    local r_dlen = encoding.modp_b85_decode(dst, s, slen)
     if r_dlen == -1 then
         return nil, "invalid input"
     end

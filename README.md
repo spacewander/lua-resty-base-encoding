@@ -29,6 +29,8 @@ Table of Contents
     * [decode_base64](#decode_base64)
     * [encode_base64url](#encode_base64url)
     * [decode_base64url](#decode_base64url)
+    * [encode_base85](#encode_base85)
+    * [encode_base85](#encode_base85)
 
 ## MUST READ
 
@@ -144,6 +146,23 @@ For more info of base32hex format, see https://tools.ietf.org/html/rfc4648#secti
 Drop-in alternative to the official implementation in lua-resty-core. Read their official documentation instead.
 The encode method is 40% faster, and the decode method is 200% faster. Note that the implementation is endian and architecture dependent.
 Read the 'Must Read' section for more info.
+
+[Back to TOC](#table-of-contents)
+
+### encode_base85
+`syntax: encoded = encode_base85(raw)`
+
+Encode given string into base85 format with/without padding '='.
+Note that there is not a standard but too many variants of so-called base85.
+This module's implementation should be compatiable with Go's encoding/ascii85
+module (not in the level of API argument, but in the level of encode/decode rules).
+
+[Back to TOC](#table-of-contents)
+
+### encode_base85
+`syntax: raw, err = decode_base85(encoded)`
+
+Decode base85 format string into its raw value. If the given string is not valid base85 encoded, the `raw` will be `nil` and `err` will be `"invalid input"`.
 
 [Back to TOC](#table-of-contents)
 

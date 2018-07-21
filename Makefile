@@ -12,8 +12,10 @@ ${OBJ} : %.o : %.c
 ${LIB} : ${OBJ}
 	$(CC) $^ $(LDFLAGS) -o $@
 
+modp_b85_gen: modp_b85_gen.o arraytoc.o
+
 clean:
-	rm -f $(LIB) *.o
+	rm -f $(LIB) modp_b85_gen *.o
 
 test: $(LIB)
 	prove -r t/
