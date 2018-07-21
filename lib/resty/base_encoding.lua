@@ -3,7 +3,6 @@ local tostring = tostring
 local type = type
 local ceil = math.ceil
 local floor = math.floor
-local str_rep = string.rep
 local base = require "resty.core.base"
 local get_string_buf = base.get_string_buf
 local ffi = require "ffi"
