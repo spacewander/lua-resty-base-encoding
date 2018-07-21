@@ -30,7 +30,7 @@ Table of Contents
     * [encode_base64url](#encode_base64url)
     * [decode_base64url](#decode_base64url)
     * [encode_base85](#encode_base85)
-    * [encode_base85](#encode_base85)
+    * [decode_base85](#decode_base85)
 
 ## MUST READ
 
@@ -159,7 +159,7 @@ module (not in the level of API argument, but in the level of encode/decode rule
 
 [Back to TOC](#table-of-contents)
 
-### encode_base85
+### decode_base85
 `syntax: raw, err = decode_base85(encoded)`
 
 Decode base85 format string into its raw value. If the given string is not valid base85 encoded, the `raw` will be `nil` and `err` will be `"invalid input"`.
