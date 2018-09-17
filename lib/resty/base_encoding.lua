@@ -3,14 +3,32 @@ local tostring = tostring
 local type = type
 local ceil = math.ceil
 local floor = math.floor
-local base = require "resty.core.base"
-local get_string_buf = base.get_string_buf
 local ffi = require "ffi"
+local ffi_new = ffi.new
 local ffi_string = ffi.string
 
 
 local _M = { version = "1.3.0"}
 
+
+local get_string_buf
+do
+    local str_buf_size = 4096
+    local str_buf
+    local c_buf_type = ffi.typeof("char[?]")
+
+    function get_string_buf(size)
+        if size > str_buf_size then
+            return ffi_new(c_buf_type, size)
+        end
+
+        if not str_buf then
+            str_buf = ffi_new(c_buf_type, str_buf_size)
+        end
+
+        return str_buf
+    end
+end
 
 local function load_shared_lib(so_name)
     local tried_paths = {}
