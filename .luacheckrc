@@ -4,3 +4,6 @@ ignore = {
 }
 std = 'ngx_lua'
 redefined = false
+read_globals = {
+    "table.clone"
+}
