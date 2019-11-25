@@ -16,6 +16,7 @@ Table of Contents
 * [MUST READ](#must-read)
 * [Synopsis](#synopsis)
 * [Installation](#installation)
+* [Benchmark](#benchmark)
 * [Methods](#methods)
     * [encode_base2](#encode_base2)
     * [decode_base2](#decode_base2)
@@ -63,6 +64,13 @@ For more examples, read the `t/base*.t` files.
 Run `make`. Then copy the `librestybaseencoding.so` to one of your `lua_package_cpath`.
 Yes, this library uses a trick to load the shared object from cpath instead of system shared library path.
 Finally, add the `$pwd/lib` to your `lua_package_path`.
+
+[Back to TOC](#table-of-contents)
+
+## Benchmark
+
+In short, it is quite faster than pure Lua alternatives, and a little faster than other C/FFI implementation.
+Go to [Benchmark](benchmark/readme.md) page for the details.
 
 [Back to TOC](#table-of-contents)
 
