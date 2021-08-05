@@ -22,6 +22,7 @@ You can run the benchmark with `resty -I .. -I ../lib ./benchmark.lua` (make sur
 
 Here is the result in my machine (the unit is MB/s):
 
+```
                         be     basexx  FFI     lua-resty-core
 base2-encode-short      61      0.62    -       -
 base2-decode-short      305     0.86    -       -
@@ -48,6 +49,7 @@ base85-decode-short     305     6.8     -       -
 base85-encode-long      333     3.4     -       -
 base85-decode-long      500     4.6     -       -
 (`be` is the abbr. of lua-resty-base-encoding)
+```
 
 ## Why faster?
 
